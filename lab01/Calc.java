@@ -66,6 +66,7 @@ class Calc {
         if (token == '!') {
             match('!');
             result = !(boolean) expr();
+        // TODO Q. 'truelabc' 같은 게 들어오면 어떻게 처리해야 할까?
         } else if (token == 't') {
             match('t');
             if (token == 'r') match('r');
@@ -81,6 +82,7 @@ class Calc {
             result = false;
         } else {
             result = bexp();
+            // TODO &&과 & 중에 뭘 의도하신 걸까?
             while (token == '&' || token == '|') {
                 boolean left = (boolean) result;
                 if (token == '&') {
