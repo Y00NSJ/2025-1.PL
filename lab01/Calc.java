@@ -44,7 +44,7 @@ class Calc {
 
     void error( ) {
         System.out.printf("parse error : %d\n", ch);
-        //System.exit(1);
+        System.exit(1);
     }
 
     void match(int c) { 
@@ -55,26 +55,122 @@ class Calc {
 
     void command( ) {
     /* command -> expr '\n' */
-        int result = aexp();
+        Object result = expr();
         if (token == '\n') /* end the parse and print the result */
 	    System.out.println(result);
         else error();
     }
 
     Object expr() {
-		
+		Object result;
+        if (token == '!') {
+            match('!');
+            result = !(boolean) expr();
+        } else if (token == 't') {
+            match('t');
+            if (token == 'r') match('r');
+            if (token == 'u') match('u');
+            if (token == 'e') match('e');
+            result = true;
+        } else if (token == 'f') {
+            match('f');
+            if (token == 'a') match('a');
+            if (token == 'l') match('l');
+            if (token == 's') match('s');
+            if (token == 'e') match('e');
+            result = false;
+        } else {
+            result = bexp();
+            while (token == '&' || token == '|') {
+                boolean left = (boolean) result;
+                if (token == '&') {
+                    match('&');
+                    boolean right = (boolean) bexp();
+                    result = left & right;
+                } else {
+                    match('|');
+                    boolean right = (boolean) bexp();
+                    result = left | right;
+                }
+            }
+        }
+        return result;
 	}
 
     Object bexp( ) {
-			
+        Object result = aexp();
+        if (token == '=' | token == '!' | token == '<' | token == '>') {
+            String operator = relop();
+            int right = aexp();
+
+            switch (operator) {
+                case "==":
+                    result = (int)result == right;
+                    break;
+                case "!=":
+                    result = (int)result != right;
+                    break;
+                case "<":
+                    result = (int)result < right;
+                    break;
+                case ">":
+                    result = (int)result > right;
+                    break;
+                case "<=":
+                    result = (int)result <= right;
+                    break;
+                case ">=":
+                    result = (int)result >= right;
+                    break;
+            }
+        }
+
+        return result;
 	}
+
+    String relop() {
+        String result = "";
+        switch (token) {
+            case '=':
+                match('=');
+                if (token == '=') match('=');
+                result = "==";
+                break;
+            case '!':
+                match('!');
+                if (token == '=') match('=');
+                result = "!=";
+                break;
+            case '<':
+                match('<');
+                if (token == '=') {
+                    match('=');
+                    result = "<=";
+                } else result = "<";
+                break;
+            case '>':
+                match('>');
+                if (token == '=') {
+                    match('=');
+                    result = ">=";
+                } else result = ">";
+                break;
+        }
+        return result;
+    }
 
     int aexp( ) {
     /* expr -> term { '+' term } */
         int result = term();
-        while (token == '+') {
-            match('+');
-            result += term();
+        while (token == '+' || token == '-') {
+            if (token == '+') {
+                match('+');
+                result += term();
+            }
+            else {
+                match('-');
+                result -= term();
+            }
         }
         return result;
     }
@@ -82,9 +178,15 @@ class Calc {
     int term( ) {
     /* term -> factor { '*' factor } */
        int result = factor();
-       while (token == '*') {
-           match('*');
-           result *= factor();
+       while (token == '*' || token == '/') {
+           if (token == '*') {
+               match('*');
+               result *= factor();
+           }
+           else {
+               match('/');
+               result /= factor();
+           }
        }
        return result;
     }
