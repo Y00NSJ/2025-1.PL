@@ -174,16 +174,24 @@ public class Parser {
     // <readStmt> -> read id;
     //
     // parse read statement
-    // 
-	return null;
+    //
+        match(Token.READ);
+        Identifier id = new Identifier(match(Token.ID));
+        match(Token.SEMICOLON);
+
+	    return new Read(id);
     }
 
     private Print printStmt() {
     // <printStmt> -> print <expr>;
     //
     // parse print statement
-    // 
-	return null;
+    //
+        match(Token.PRINT);
+        Expr e = expr();
+        match(Token.SEMICOLON);
+
+	    return new Print(e);
     }
 
     private Return returnStmt() {
