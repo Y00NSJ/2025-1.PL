@@ -261,6 +261,12 @@ public class Parser {
 	//
 	// parse logical operations
 	//
+        if (token == Token.AND || token == Token.OR) {
+            Operator op = new Operator(match(token));
+            Expr rBexp = bexp();
+            return new Binary(op, e, rBexp);
+        }
+
         return e;
     }
 
@@ -270,6 +276,17 @@ public class Parser {
 	//
 	// parse relational operations
 	//
+        switch (token) {
+            case LT:
+            case LTEQ:
+            case GT:
+            case GTEQ:
+            case EQUAL:
+            case NOTEQ:
+                Operator op = new Operator(match(token));
+                Expr rAexp = aexp();
+                return new Binary(op, e, rAexp);
+        }
         return e;
     }
   
@@ -373,8 +390,8 @@ public class Parser {
 	        Lexer.interactive = true;
 	        parser  = new Parser(new Lexer());
 	        do {
-	            if (parser.token == Token.EOF) 
-		        parser.token = parser.lexer.getToken();
+	            if (parser.token == Token.EOF)
+                    parser.token = parser.lexer.getToken();
 
                 try {
                     command = parser.command();
