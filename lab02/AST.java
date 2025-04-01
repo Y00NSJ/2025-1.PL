@@ -2,9 +2,19 @@
 // AST for S
 import java.util.*;
 
+class Indent {
+    public static void display(int level, String s) {
+        String tab = "";
+        System.out.println();
+        for (int i = 0; i < level; i++) tab = tab + "        ";
+        System.out.print(tab + s);
+    }
+}
+
 abstract class Command {
     // Command = Decl | Function | Stmt
     Type type =Type.UNDEF;
+    public void display(int l) {}
 }
 
 class Decls extends ArrayList<Decl> {
@@ -13,6 +23,11 @@ class Decls extends ArrayList<Decl> {
     Decls() { super(); };
     Decls(Decl d) {
 	    this.add(d);
+    }
+
+    public void display(int level) {
+        Indent.display(level, "Decls");
+        for (Decl d : this) d.display(level + 1);
     }
 }
 
@@ -32,7 +47,14 @@ class Decl extends Command {
 
     Decl (String s, Type t, Expr e) {
         id = new Identifier(s); type = t; expr = e;
-    } // declaration 
+    } // declaration
+
+    public void display(int level) {
+        Indent.display(level, "Decl");
+        type.display(level + 1);
+        id.display(level + 1);
+        if (expr != null) expr.display(level + 1);
+    }
 }
 
 class Functions extends ArrayList<Function> {
@@ -70,6 +92,9 @@ class Type {
     protected String id;
     protected Type(String s) { id = s; }
     public String toString ( ) { return id; }
+    public void display(int level) {
+        Indent.display(level, "Type: " + id);
+    }
 }
 
 class ProtoType extends Type {
@@ -102,6 +127,11 @@ class Stmts extends Stmt {
     Stmts(Stmt s) {
 	     stmts.add(s);
     }
+
+    public void display(int level) {
+        Indent.display(level, "Stmts");
+        for (Stmt s : stmts) s.display(level + 1);
+    }
 }
 
 class Assignment extends Stmt {
@@ -119,6 +149,12 @@ class Assignment extends Stmt {
         ar = a;
         expr = e;
     }
+
+    public void display(int level) {
+        Indent.display(level, "Assignment");
+        id.display(level + 1);
+        expr.display(level + 1);
+    }
 }
 
 class If extends Stmt {
@@ -133,6 +169,13 @@ class If extends Stmt {
     If (Expr t, Stmt tp, Stmt ep) {
         expr = t; stmt1 = tp; stmt2 = ep; 
     }
+
+    public void display(int level) {
+        Indent.display(level, "If");
+        expr.display(level + 1);
+        stmt1.display(level + 1);
+        stmt2.display(level + 1);
+    }
 }
 
 class While extends Stmt {
@@ -142,6 +185,12 @@ class While extends Stmt {
 
     While (Expr t, Stmt b) {
         expr = t; stmt = b;
+    }
+
+    public void display(int level) {
+        Indent.display(level, "While");
+        expr.display(level + 1);
+        stmt.display(level + 1);
     }
 }
 
@@ -162,6 +211,12 @@ class Let extends Stmt {
 	    funs = fs;
         stmts = ss;
     }
+
+    public void display(int level) {
+        Indent.display(level, "Let");
+        decls.display(level + 1);
+        stmts.display(level + 1);
+    }
 }
 
 class Read extends Stmt {
@@ -171,6 +226,11 @@ class Read extends Stmt {
     Read (Identifier v) {
         id = v;
     }
+
+    public void display(int level) {
+        Indent.display(level, "Read");
+        id.display(level + 1);
+    }
 }
 
 class Print extends Stmt {
@@ -179,6 +239,11 @@ class Print extends Stmt {
 
     Print (Expr e) {
         expr = e;
+    }
+
+    public void display(int level) {
+        Indent.display(level, "Print");
+        expr.display(level + 1);
     }
 }
 
@@ -219,7 +284,6 @@ class Exprs extends ArrayList<Expr> {
 
 abstract class Expr extends Stmt {
     // Expr = Identifier | Value | Binary | Unary | Call
-
 }
 
 class Call extends Expr { 
@@ -243,6 +307,10 @@ class Identifier extends Expr {
     public boolean equals (Object obj) {
         String s = ((Identifier) obj).id;
         return id.equals(s);
+    }
+
+    public void display(int level) {
+        Indent.display(level, "Identifier: " + id);
     }
 }
 
@@ -319,12 +387,16 @@ class Value extends Expr {
 
     public String toString( ) {
         //if (undef) return "undef";
-        if (type == Type.INT) return "" + intValue(); 
+        if (type == Type.INT) return "" + intValue();
         if (type == Type.BOOL) return "" + boolValue();
 	    if (type == Type.STRING) return "" + stringValue();
         if (type == Type.FUN) return "" + funValue();
         if (type == Type.ARRAY) return "" + arrValue();
         return "undef";
+    }
+
+    public void display(int level) {
+        Indent.display(level, "Value: " + value.toString());
     }
 }
 
@@ -336,6 +408,13 @@ class Binary extends Expr {
     Binary (Operator o, Expr e1, Expr e2) {
         op = o; expr1 = e1; expr2 = e2;
     } // binary
+
+    public void display(int level) {
+        Indent.display(level, "Binary");
+        op.display(level + 1);
+        expr1.display(level + 1);
+        expr2.display(level + 1);
+    }
 }
 
 class Unary extends Expr {
@@ -348,6 +427,11 @@ class Unary extends Expr {
         expr = e;
     } // unary
 
+    public void display(int level) {
+        Indent.display(level, "Unary");
+        op.display(level + 1);
+        expr.display(level + 1);
+    }
 }
 
 class Operator {
@@ -363,5 +447,9 @@ class Operator {
 
     public boolean equals(Object obj) { 
 	return val.equals(obj); 
+    }
+
+    public void display(int level) {
+        Indent.display(level, "Operator: " + val);
     }
 }
