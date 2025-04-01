@@ -239,7 +239,15 @@ public class Parser {
     //
     // parse while statement
     //
-        return null;
+        match(Token.WHILE);
+
+        match(Token.LPAREN);
+        Expr e = expr();
+        match(Token.RPAREN);
+
+        Stmt s = stmt();
+        return new While(e, s);
+
     }
 
     private Expr expr () {
