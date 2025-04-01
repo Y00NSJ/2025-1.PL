@@ -411,7 +411,7 @@ public class Parser {
 
                 try {
                     command = parser.command();
-		            // if (command != null) command.display(0);    // display AST 
+		            if (command != null) command.display(0);    // display AST
                 } catch (Exception e) {
                     System.err.println(e);
                 }
@@ -427,7 +427,7 @@ public class Parser {
 
                 try {
 		             command = parser.command();
-		             // if (command != null) command.display(0);      // display AST
+		             if (command != null) command.display(0);      // display AST
                 } catch (Exception e) {
                     System.err.println(e); 
                 }
