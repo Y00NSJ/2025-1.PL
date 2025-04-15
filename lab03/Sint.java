@@ -164,10 +164,15 @@ public class Sint {
         //
         if (ds != null) {
             for (Decl d : ds) {
-                state.push(d.id, new Value(d));
+                Value v;
+                if (d.expr != null) {
+                    v = V(d.expr, state);  // 초기화 Expr (O)
+                } else {
+                    v = new Value(d.type); // 초기화 Expr (X) => 언어 설정 기본값
+                }
+                state.push(d.id, v);
             }
         }
-
         return state;
     }
 
@@ -325,7 +330,7 @@ public class Sint {
 						 throw new Exception();
 					 else  {
 						 command.type = TypeChecker.Check(command); 
-                         System.out.println("\nType: "+ command.type);
+                         // System.out.println("\nType: "+ command.type);
 					 }
                 } catch (Exception e) {
                     System.out.println(e);
