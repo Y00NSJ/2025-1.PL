@@ -204,16 +204,34 @@ public class Sint {
 	// relational operations
 	//
         case "==":
+            if (v1.type == Type.STRING && v2.type == Type.STRING) {
+                return new Value(v1.stringValue().equals(v2.stringValue()));
+            }
             return new Value(v1.intValue() == v2.intValue());
         case "!=":
+            if (v1.type == Type.STRING && v2.type == Type.STRING) {
+                return new Value(!v1.stringValue().equals(v2.stringValue()));
+            }
             return new Value(v1.intValue() != v2.intValue());
         case "<":
+            if (v1.type == Type.STRING && v2.type == Type.STRING) {
+                return new Value(v1.stringValue().compareTo(v2.stringValue()) < 0);
+            }
             return new Value(v1.intValue() < v2.intValue());
         case ">":
+            if (v1.type == Type.STRING && v2.type == Type.STRING) {
+                return new Value(v1.stringValue().compareTo(v2.stringValue()) > 0);
+            }
             return new Value(v1.intValue() > v2.intValue());
         case "<=":
+            if (v1.type == Type.STRING && v2.type == Type.STRING) {
+                return new Value(v1.stringValue().compareTo(v2.stringValue()) <= 0);
+            }
             return new Value(v1.intValue() <= v2.intValue());
         case ">=":
+            if (v1.type == Type.STRING && v2.type == Type.STRING) {
+                return new Value(v1.stringValue().compareTo(v2.stringValue()) >= 0);
+            }
             return new Value(v1.intValue() >= v2.intValue());
 
 
@@ -221,9 +239,9 @@ public class Sint {
 	// logical operations
 	//
         case "&":
-            return new Value(v1.intValue() & v2.intValue());
+            return new Value(v1.boolValue() & v2.boolValue());
         case "|":
-            return new Value(v1.intValue() | v2.intValue());
+            return new Value(v1.boolValue() | v2.boolValue());
 
 	    default:
 	        throw new IllegalArgumentException("no operation");
