@@ -138,6 +138,8 @@ public class Parser {
             s = whileStmt(); return s;
         case DO:
             s = doWhileStmt(); return s;
+        case FOR:
+            s = forStmt(); return s;
         case ID:	// assignment
             s = assignment(); return s;
 	    case LET:	// let statement 
@@ -272,6 +274,36 @@ public class Parser {
         stmts.stmts.add(s);
         stmts.stmts.add(new While(e, s));
         return stmts;
+    }
+
+    private Let forStmt () {
+        match(Token.FOR);
+        match(Token.LPAREN);
+
+        Decl initialDecl = decl();
+
+        Expr condExpr = expr();
+        match(Token.SEMICOLON);
+
+        Stmt assignment;
+        Identifier id = new Identifier(match(Token.ID));
+        match(Token.ASSIGN);
+        Expr e = expr();
+        assignment = new Assignment(id, e);
+        match(Token.RPAREN);
+
+        Stmt bodyStmt = stmt();
+
+        Decls letDecls = new Decls();
+        letDecls.add(initialDecl);
+
+        Stmts innerStmts = new Stmts();
+        Stmts whileExecStmts = new Stmts();
+        whileExecStmts.stmts.add(bodyStmt);
+        whileExecStmts.stmts.add(assignment);
+        innerStmts.stmts.add(new While(condExpr, whileExecStmts));
+
+        return new Let(letDecls, innerStmts);
     }
 
     private Expr expr () {
