@@ -136,6 +136,8 @@ public class Parser {
             s = ifStmt(); return s;
         case WHILE:      // while statement 
             s = whileStmt(); return s;
+        case DO:
+            s = doWhileStmt(); return s;
         case ID:	// assignment
             s = assignment(); return s;
 	    case LET:	// let statement 
@@ -256,6 +258,20 @@ public class Parser {
         Stmt s = stmt();
         return new While(e, s);
 
+    }
+
+    private Stmt doWhileStmt () {
+        match(Token.DO);
+        Stmt s = stmt();
+        match(Token.WHILE);
+        match(Token.LPAREN);
+        Expr e = expr();
+        match(Token.RPAREN);
+
+        Stmts stmts = new Stmts();
+        stmts.stmts.add(s);
+        stmts.stmts.add(new While(e, s));
+        return stmts;
     }
 
     private Expr expr () {
