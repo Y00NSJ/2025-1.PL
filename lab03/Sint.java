@@ -198,12 +198,27 @@ public class Sint {
 	//
 	// relational operations
 	//
-            case "==":
+        case "==":
+            return new Value(v1.intValue() == v2.intValue());
+        case "!=":
+            return new Value(v1.intValue() != v2.intValue());
+        case "<":
+            return new Value(v1.intValue() < v2.intValue());
+        case ">":
+            return new Value(v1.intValue() > v2.intValue());
+        case "<=":
+            return new Value(v1.intValue() <= v2.intValue());
+        case ">=":
+            return new Value(v1.intValue() >= v2.intValue());
 
 
     //
 	// logical operations
 	//
+        case "&":
+            return new Value(v1.intValue() & v2.intValue());
+        case "|":
+            return new Value(v1.intValue() | v2.intValue());
 
 	    default:
 	        throw new IllegalArgumentException("no operation");
