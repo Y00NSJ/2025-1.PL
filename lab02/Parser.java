@@ -406,6 +406,7 @@ public class Parser {
 	        Lexer.interactive = true;
 	        parser  = new Parser(new Lexer());
 	        do {
+                // 입력하고 cmd+d 하면
 	            if (parser.token == Token.EOF)
                     parser.token = parser.lexer.getToken();
 
