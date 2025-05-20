@@ -36,12 +36,10 @@ public class Parser {
 	        Decl d = decl();
 	        return d;
 	    }
-	/*
 	    if (token == Token.FUN) {
 	        Function f = function();
 	        return f;
 	    }
-	*/
 	    if (token != Token.EOF) {
 	        Stmt s = stmt();
             return s;
@@ -82,7 +80,6 @@ public class Parser {
         return ds;             
     }
 
-/*
     private Function function() {
     // <function>  -> fun <type> id(<params>) <stmt> 
         match(Token.FUN);
@@ -103,11 +100,22 @@ public class Parser {
 	    Decls params = new Decls();
 
 		// parse declrations of parameters
+        Type t = type();
+        String id = match(Token.ID);
+        Decl d = new Decl(id, t);
+        params.add(d);
+
+        while (token == Token.COMMA) {
+            match(Token.COMMA);
+            Type otherT = type();
+            String otherId = match(Token.ID);
+            Decl otherD = new Decl(otherId, otherT);
+            params.add(otherD);
+        }
 
         return params;
     }
 
-*/
 
     private Type type () {
     // <type>  ->  int | bool | void | string 
@@ -133,7 +141,7 @@ public class Parser {
         Stmt s = new Empty();
         switch (token) {
 	    case SEMICOLON:
-            match(token.SEMICOLON); return s;
+            match(Token.SEMICOLON); return s;
         case LBRACE:			
 	        match(Token.LBRACE);		
             s = stmts();
@@ -217,10 +225,12 @@ public class Parser {
     // <assignment> -> id = <expr>;
     // <assignment> -> id[<expr>] = <expr>;
         Identifier id = new Identifier(match(Token.ID));
-	/*
-	    if (token == Token.LPAREN)    // function call 
-	        return call(id);
-	*/
+	    if (token == Token.LPAREN) {   // function call
+            Call c = call(id);
+            match(Token.SEMICOLON);
+
+            return c;
+        }
         if (token == Token.LBRACKET) {
             match(Token.LBRACKET);
             Expr eIdx = expr();
@@ -241,15 +251,14 @@ public class Parser {
         }
     }
 
-/*
     private Call call(Identifier id) {
     // <call> -> id(<expr>{,<expr>});
-    //
-    // parse function call
-    //
-	return null;
+        match(Token.LPAREN);
+        Call c = new Call(id, arguments());
+        match(Token.RPAREN);
+
+	    return c;
     }
-*/
 
     private If ifStmt () {
     // <ifStmt> -> if (<expr>) then <stmt> [else <stmt>]
@@ -415,10 +424,7 @@ public class Parser {
                 e = new Array(v, idx);
             }
             if (token == Token.LPAREN) {  // function call
-                match(Token.LPAREN);
-                Call c = new Call(v,arguments());
-                match(Token.RPAREN);
-                e = c;
+                e = call(v);
             } 
             break;
         case NUMBER: case STRLITERAL: 
