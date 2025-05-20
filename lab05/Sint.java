@@ -1,5 +1,7 @@
 // Sint.java
 // Interpreter for S
+import java.util.LinkedList;
+import java.util.Queue;
 import java.util.Scanner;
 
 public class Sint {
@@ -49,13 +51,14 @@ public class Sint {
         throw new IllegalArgumentException("no statement");
     }
 
-/*
     // call without return value
     State Eval(Call c, State state) {
-	//
-	// evaluate call without return value
-	//
-	    return state;
+        Function f = state.get(c.fid).funValue();
+        State s = newFrame(state, c, f);
+        s = Eval(f.stmt, s);
+        s = deleteFrame(s, c, f);
+
+	    return s;
     }
 
     // call with return value 
@@ -80,11 +83,19 @@ public class Sint {
 	//
 	// evaluate arguments
 	//
+        Queue<Value> q = new LinkedList<Value>();
+        for (Expr e : c.args) {
+            Value v = V(e, state);
+            q.add(v);
+        }
 
 	//
 	// activate a new stack frame in the stack 
 	//
-	
+	    for (Decl d : f.params) {
+            state.push(d.id, q.remove());
+        }
+
 	    state.push(new Identifier("return"), null); // allocate for return value
         return state;
     }
@@ -94,9 +105,12 @@ public class Sint {
 	//
 	// free a stack frame from the stack
 	//
+        int cnt = f.params.size();
+        while (cnt-- > 0) {
+            state.pop();
+        }
 	    return state;
     }
-*/
 
     State Eval(Empty s, State state) {
         return state;
